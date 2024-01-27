@@ -4,7 +4,7 @@ from icecream import ic
 from pathlib import Path
 import yaml
 
-state = {}
+state = {'key': []}
 config_dict = {}
 
 def FROM(path):
@@ -19,7 +19,17 @@ def FROM(path):
             hy.eval(expr)        
 
 def SET(key, val):
-    config_dict[key] = val 
+    if state['key'] == []:
+        config_dict[key] = val 
+    else:
+        d = config_dict 
+        for k in state['key']:
+            if k in d:
+                d = d[k]
+            else:
+                d[k] = {}
+                d = d[k]
+        d[key] = val
 
 def GET(*args):
     vals = []
@@ -30,6 +40,12 @@ def GET(*args):
             v = a 
         vals.append(v)
     return ''.join(vals)
+
+def KEY(key):
+    state['key'].append(key) 
+
+def UNKEY():
+    state['key'].pop(-1)
 
 def main():
     target = Path(sys.argv[1])
