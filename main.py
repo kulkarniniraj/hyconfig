@@ -3,6 +3,7 @@ import sys
 from icecream import ic
 from pathlib import Path
 import yaml
+import os
 
 state = {'key': []}
 config_dict = {}
@@ -47,6 +48,15 @@ def KEY(key):
 def UNKEY():
     state['key'].pop(-1)
 
+def ENV(var, default = None):
+    return os.getenv(var, default)
+
+def OPTSET(cond, key, val):
+    if cond is True:
+        SET(key, val) 
+
+def IFSET(key):
+    return key in config_dict
 def main():
     target = Path(sys.argv[1])
     state['cwd'] = target.parent
